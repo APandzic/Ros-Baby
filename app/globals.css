@@ -127,8 +127,11 @@
     @apply font-sans;
     }
 
-  /* iOS Safari: prevent disabled buttons from overriding text color */
-  button:disabled {
+  /* iOS Safari: prevent overriding text colors */
+  button:disabled,
+  label,
+  input,
+  textarea {
     -webkit-text-fill-color: currentColor;
   }
 
