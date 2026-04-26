@@ -443,7 +443,7 @@ export default function Page() {
               <h2 className="text-lg font-semibold text-stone-800">
                 {tx.wishlistTitle}
               </h2>
-              <p className="text-sm text-muted-foreground">{tx.wishlistDesc}</p>
+              <p className="text-sm text-stone-800">{tx.wishlistDesc}</p>
             </div>
 
             {loadingItems ? (
