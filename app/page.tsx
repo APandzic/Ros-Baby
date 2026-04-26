@@ -29,9 +29,9 @@ import { Gift, CheckCircle2, ShoppingBag, Loader2, MapPin, CalendarDays, Clock }
 
 // ─── Event info – uppdatera dessa ───────────────────────────
 const EVENT = {
-  date: "6 Juni 2025",
-  dateEn: "June 6, 2025",
-  time: "13:00–17:00",
+  date: "6 Juni 2026",
+  dateEn: "June 6, 2026",
+  time: "13:00",
   location: "Diavoxvägen 18A, Stockholm",
   rsvpDeadline: "20 Maj",
   rsvpDeadlineEn: "May 20",
