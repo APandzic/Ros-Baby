@@ -15,7 +15,7 @@ function Label({
         "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
         className,
       )}
-      style={{ color: "rgb(28 25 23)", WebkitTextFillColor: "rgb(28 25 23)" }}
+      style={{ color: "white", WebkitTextFillColor: "white" }}
       {...props}
     />
   )
