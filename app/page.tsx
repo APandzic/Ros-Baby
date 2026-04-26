@@ -420,7 +420,7 @@ export default function Page() {
                         attending === null ||
                         rsvpState === "loading"
                       }
-                      className="w-full bg-stone-800 hover:bg-stone-700"
+                      className="w-full bg-stone-800 text-white hover:bg-stone-700"
                     >
                       {rsvpState === "loading" ? (
                         <>
@@ -572,7 +572,7 @@ export default function Page() {
               <Button
                 type="submit"
                 disabled={!claimerName.trim() || claimState === "loading"}
-                className="flex-1 bg-stone-800 hover:bg-stone-700"
+                className="flex-1 bg-stone-800 text-white hover:bg-stone-700"
               >
                 {claimState === "loading" ? (
                   <>
