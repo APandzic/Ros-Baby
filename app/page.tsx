@@ -13,13 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog"
 import type { WishListItem } from "@/lib/db"
 
 type WishListItemWithClaimed = Omit<WishListItem, "claimed_by" | "claimed_at"> & {
@@ -213,15 +206,8 @@ export default function Page() {
     }
   }
 
-  function openClaimDialog(item: WishListItemWithClaimed) {
-    setSelectedItem(item)
-    setClaimerName("")
-    setClaimState("idle")
-    setClaimError("")
-  }
-
-  function closeClaimDialog() {
-    setSelectedItem(null)
+  function selectItem(item: WishListItemWithClaimed) {
+    setSelectedItem(selectedItem?.id === item.id ? null : item)
     setClaimerName("")
     setClaimState("idle")
     setClaimError("")
@@ -471,28 +457,67 @@ export default function Page() {
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       {items
                         .filter((i) => !i.claimed)
-                        .map((item) => (
-                          <button
-                            key={item.id}
-                            onClick={() => openClaimDialog(item)}
-                            className="group rounded-xl border border-stone-200 bg-white p-5 text-left shadow-sm transition-all hover:border-stone-400 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400"
-                          >
-                            <div className="mb-3 flex size-9 items-center justify-center rounded-full bg-stone-100 text-stone-500 transition-colors group-hover:bg-stone-200">
-                              <Gift className="size-4" />
+                        .map((item) => {
+                          const isSelected = selectedItem?.id === item.id
+                          return (
+                            <div
+                              key={item.id}
+                              className="rounded-xl border border-stone-200 bg-white shadow-sm transition-all"
+                            >
+                              <button
+                                onClick={() => selectItem(item)}
+                                className="group w-full p-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 rounded-xl"
+                              >
+                                <div className="mb-3 flex size-9 items-center justify-center rounded-full bg-stone-100 text-stone-500 transition-colors group-hover:bg-stone-200">
+                                  <Gift className="size-4" />
+                                </div>
+                                <p className="font-semibold text-stone-800">{item.name}</p>
+                                {item.description && (
+                                  <p className="mt-1 line-clamp-2 text-sm text-stone-500">
+                                    {item.description}
+                                  </p>
+                                )}
+                                {item.store_name && (
+                                  <p className="mt-3 text-xs text-stone-400">
+                                    {item.store_name}
+                                  </p>
+                                )}
+                              </button>
+
+                              {isSelected && (
+                                <form
+                                  onSubmit={handleClaim}
+                                  className="border-t border-stone-100 px-5 pb-5 pt-4 space-y-3"
+                                >
+                                  <Input
+                                    placeholder={tx.claimerPlaceholder}
+                                    value={claimerName}
+                                    onChange={(e) => setClaimerName(e.target.value)}
+                                    required
+                                    autoFocus
+                                  />
+                                  {claimError && (
+                                    <p className="text-sm text-destructive">{claimError}</p>
+                                  )}
+                                  <Button
+                                    type="submit"
+                                    disabled={!claimerName.trim() || claimState === "loading"}
+                                    className="w-full bg-stone-800 text-white hover:bg-stone-700"
+                                  >
+                                    {claimState === "loading" ? (
+                                      <>
+                                        <Loader2 className="animate-spin" />
+                                        {tx.booking}
+                                      </>
+                                    ) : (
+                                      tx.book
+                                    )}
+                                  </Button>
+                                </form>
+                              )}
                             </div>
-                            <p className="font-semibold text-stone-800">{item.name}</p>
-                            {item.description && (
-                              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-                                {item.description}
-                              </p>
-                            )}
-                            {item.store_name && (
-                              <p className="mt-3 text-xs text-stone-400">
-                                {item.store_name}
-                              </p>
-                            )}
-                          </button>
-                        ))}
+                          )
+                        })}
                     </div>
                   </>
                 )}
@@ -528,65 +553,6 @@ export default function Page() {
         </Tabs>
       </main>
 
-      {/* Claim Dialog */}
-      <Dialog
-        open={!!selectedItem}
-        onOpenChange={(open) => !open && closeClaimDialog()}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{tx.claimTitle}</DialogTitle>
-            <DialogDescription>
-              {tx.claimDesc}{" "}
-              <span className="font-medium text-foreground">
-                {selectedItem?.name}
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleClaim} className="mt-4 space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="claimer-name">{tx.claimerLabel}</Label>
-              <Input
-                id="claimer-name"
-                placeholder={tx.claimerPlaceholder}
-                value={claimerName}
-                onChange={(e) => setClaimerName(e.target.value)}
-                required
-                autoFocus
-              />
-            </div>
-
-            {claimError && (
-              <p className="text-sm text-destructive">{claimError}</p>
-            )}
-
-            <div className="flex gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="flex-1"
-                onClick={closeClaimDialog}
-              >
-                {tx.cancel}
-              </Button>
-              <Button
-                type="submit"
-                disabled={!claimerName.trim() || claimState === "loading"}
-                className="flex-1 bg-stone-800 text-white hover:bg-stone-700"
-              >
-                {claimState === "loading" ? (
-                  <>
-                    <Loader2 className="animate-spin" />
-                    {tx.booking}
-                  </>
-                ) : (
-                  tx.book
-                )}
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
